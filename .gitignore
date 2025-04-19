@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
+=======
+.qodo
+>>>>>>> 396e109 (Added : Home page Integration)

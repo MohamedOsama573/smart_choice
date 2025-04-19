@@ -1,168 +1,161 @@
 import { Button } from "flowbite-react";
-import phone1 from "../../assets/test.jpg";
-import phone2 from "../../assets/test2.jpg";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import amazonLogo from "../../assets/amazon.png";
-import noonLogo from "../../assets/noon.png";
 import jumiaLogo from "../../assets/jumia.png";
-import { useState } from "react";
+import noonLogo from "../../assets/noon.png";
+import axios from "axios";
 
 export default function Details() {
+  const { id } = useParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMore, setShowMore] = useState(false);
-  const images = [phone1, phone2];
+  const [loading, setLoading] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const getOneProduct = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASEURL}api/v1/products/amazon-laptop/${id}`
+        );
+        setProduct(response.data);
+      } catch (error) {
+        setError(true);
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getOneProduct();
+  }, [id]);
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    if (!product?.galleryThumbnails?.length) return;
+    setCurrentImageIndex((prev) =>
+      prev === product.galleryThumbnails.length - 1 ? 0 : prev + 1
     );
   };
 
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
+  if (loading) return <div className="text-center p-5">Loading...</div>;
+  if (error || !product) return <div className="text-center p-5 text-red-500">Error loading product</div>;
 
   return (
-    <div className="min-h-screen ">
-      {/* المحتوى الرئيسي */}
-      <div className="container mx-auto p-6 flex flex-col md:flex-row gap-6">
-        {/* قسم الصورة - مع ارتفاع ثابت */}
-        <div className="relative flex-1 flex justify-center items-center h-96 md:h-[500px]">
-          <Button
-            onClick={handlePrevImage}
-            className="absolute left-0 bg-gray-200 text-gray-700 hover:bg-gray-300"
-            aria-label="Previous image"
-          >
-            &lt;
-          </Button>
-          {images.length > 0 ? (
-            <img
-              src={images[currentImageIndex]}
-              alt="Phone"
-              className="w-3/4 md:w-1/2 rounded-lg shadow-md object-contain"
-              loading="lazy"
-              onError={(e) => (e.target.src = "../../assets/fallback-image.png")}
-            />
-          ) : (
-            <p>No images available</p>
-          )}
-          <Button
-            onClick={handleNextImage}
-            className="absolute right-0 bg-gray-200 text-gray-700 hover:bg-gray-300"
-            aria-label="Next image"
-          >
-            &gt;
-          </Button>
+    <div className="p-5 max-w-6xl mx-auto">
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Left: Images */}
+        <div className="relative">
+          <img
+            src={product.galleryThumbnails?.[currentImageIndex] || product.thumbnailImage}
+            alt={product.title}
+            className="rounded-lg w-full max-h-[400px] object-contain"
+          />
+          <div className="flex justify-center gap-2 mt-4">
+            {product.galleryThumbnails?.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`thumb-${idx}`}
+                className={`h-16 w-16 object-cover rounded-md border-2 ${currentImageIndex === idx ? 'border-blue-500' : 'border-gray-300'}`}
+                onClick={() => setCurrentImageIndex(idx)}
+              />
+            ))}
+          </div>
+          <Button onClick={handleNextImage} className="mt-4">Next Image</Button>
         </div>
 
-        {/* قسم التفاصيل */}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Huawei Nova 12 Pro - 12GB RAM - 512GB - Green
-          </h1>
-          <ul className="text-gray-700 dark:text-gray-400 space-y-2 mb-4">
-            <li>
-              <strong>SIM Card:</strong> Nano-SIM + Nano-SIM
-            </li>
-            <li>
-              <strong>Screen:</strong> 6.76 inches, 1224 x 2776 pixels
-            </li>
-            <li>
-              <strong>RAM:</strong> 12GB
-            </li>
-            <li>
-              <strong>Internal Memory:</strong> 512GB
-            </li>
-            <li>
-              <strong>Rear Camera:</strong> Triple, 50 MP + 12 MP + 8 MP
-            </li>
-            <li>
-              <strong>Selfie Camera:</strong> Dual, 60 MP + 8 MP
-            </li>
-            <li>
-              <strong>Color:</strong> Green
-            </li>
+        {/* Right: Info */}
+        <div>
+          <h2 className="text-2xl font-bold mb-2">{product.title}</h2>
+          <p className="text-gray-600 mb-2">{product.brand}</p>
 
-            {showMore && (
-              <>
-                <li>
-                  <strong>Operating System:</strong> Android 14
-                </li>
-                <li>
-                  <strong>Resolution:</strong> 1640 x 720
-                </li>
-                <li>
-                  <strong>Refresh Rate:</strong> 90 Hz
-                </li>
-              </>
+          <div className="flex gap-4 mb-4">
+            {product.priceAmazon && (
+              <a href={product.urls?.amazon} target="_blank">
+                <img src={amazonLogo} alt="Amazon" className="h-8" />
+                <p className="text-sm">{product.priceAmazon} EGP</p>
+              </a>
             )}
+            {product.priceJumia && (
+              <a href={product.urls?.jumia} target="_blank">
+                <img src={jumiaLogo} alt="Jumia" className="h-8" />
+                <p className="text-sm">{product.priceJumia} EGP</p>
+              </a>
+            )}
+            {product.urls?.noon && (
+              <a href={product.urls?.noon} target="_blank">
+                <img src={noonLogo} alt="Noon" className="h-8" />
+              </a>
+            )}
+          </div>
 
-            <li>
+          {/* Description */}
+          <p className="text-gray-700 mb-4">
+            {showMore ? product.description : `${product.description.slice(0, 250)}...`}
+            {product.description.length > 250 && (
               <button
                 onClick={() => setShowMore(!showMore)}
-                className="text-cyan-500 hover:underline focus:outline-none"
+                className="text-blue-600 ml-2"
               >
-                {showMore ? "Show Less ↑" : "See More ↓"}
+                {showMore ? "Show less" : "Show more"}
               </button>
-            </li>
+            )}
+          </p>
+
+          {/* Features */}
+          <ul className="list-disc ml-5 text-sm text-gray-700">
+            {product.features?.map((feat, i) => (
+              <li key={i}>{feat}</li>
+            ))}
           </ul>
-
-          {/* زر المقارنة */}
-          <Button
-            onClick={() => console.log("Compare clicked")}
-            className="mb-4 px-2rounded-0 bg-cyan-600 text-white hover:bg-gray-300"
-          >
-            Compare
-          </Button>
-
-          {/* أسعار المتاجر */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <img src={amazonLogo} alt="Amazon" className="h-10 w-25 " />
-                <span className="text-lg font-semibold">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "EGP",
-                  }).format(16500)}
-                </span>
-              </div>
-              <Button color="success" as="a" href="https://amazon.com/product-link">
-                Go to shop
-              </Button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <img src={noonLogo} alt="Noon" className="h-8 w-25" />
-                <span className="text-lg font-semibold">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "EGP",
-                  }).format(17500)}
-                </span>
-              </div>
-              <Button color="success" as="a" href="https://noon.com/product-link">
-                Go to shop
-              </Button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <img src={jumiaLogo} alt="Jumia" className="h-6 w-25" />
-                <span className="text-lg font-semibold">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "EGP",
-                  }).format(17000)}
-                </span>
-              </div>
-              <Button color="success" as="a" href="https://jumia.com/product-link">
-                Go to shop
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* Attributes */}
+      <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-2">Specifications</h3>
+        <div className="grid md:grid-cols-2 gap-4 text-sm">
+          {product.attributes?.map((attr) => (
+            <div key={attr._id} className="bg-gray-50 p-2 rounded shadow-sm">
+              <span className="font-semibold">{attr.key}</span>: {attr.value || "N/A"}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reviews */}
+      {product.productPageReviews?.length > 0 && (
+        <div className="mt-10">
+          <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
+          <div className="space-y-6">
+            {product.productPageReviews.map((review) => (
+              <div key={review._id} className="border p-4 rounded-md shadow-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  {review.avatar && (
+                    <img
+                      src={review.avatar}
+                      alt={review.username}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  )}
+                  <div>
+                    <p className="font-semibold">{review.username}</p>
+                    <p className="text-sm text-gray-500">{review.reviewedIn}</p>
+                  </div>
+                </div>
+                <p className="font-bold">{review.reviewTitle}</p>
+                <p className="text-gray-700">{review.reviewDescription}</p>
+                <p className="text-yellow-500">Rating: {review.ratingScore}/5</p>
+                {review.reviewReaction && (
+                  <p className="text-xs text-gray-500 mt-1">{review.reviewReaction}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

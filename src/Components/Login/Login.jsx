@@ -20,13 +20,13 @@ export const Login = () => {
       email: "",
       password: "",
     },
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       setIsLoading(true);
       setSuccessMessage(null);
       setErrorMessage(null);
       try {
         const response = await axios.post(
-          "https://smart-choice-team.vercel.app/api/v1/signin",
+          `${import.meta.env.VITE_BASEURL}api/v1/signin`,
           values
         );
         console.log("Login successful:", response.data);
@@ -34,7 +34,7 @@ export const Login = () => {
         setSuccessMessage("Login successful!");
         setTimeout(() => {
           setSuccessMessage(null);
-          navigate("/home");
+          navigate("/");
         }, 2000);
       } catch (error) {
         console.error("Login failed:", error);
