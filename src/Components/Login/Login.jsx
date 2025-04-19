@@ -29,8 +29,12 @@ export const Login = () => {
           `${import.meta.env.VITE_BASEURL}api/v1/signin`,
           values
         );
+
         console.log("Login successful:", response.data);
         localStorage.setItem("token", response.data.token); // Save token
+
+        // console.log("Login successful:", response.data);
+
         setSuccessMessage("Login successful!");
         setTimeout(() => {
           setSuccessMessage(null);

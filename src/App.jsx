@@ -19,7 +19,11 @@ const router = createBrowserRouter([
     {path:'login' , element:<Login/>},
     {path:'register' , element:<Register/>},
     {path:'compare' , element:<Compare/>},
+<<<<<<< HEAD
     {path:'/product/:id' , element:<Details/>},
+=======
+    {path:'product/:id' , element:<Details/>},
+>>>>>>> 9b390f0 (added : Product Details)
     {path:'forgetPassword' , element:<ForgetPassword/>},
     {path:'*' , element:<Notfound/>},
   ]}

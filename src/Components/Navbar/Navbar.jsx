@@ -4,12 +4,16 @@ import logo from "../../assets/smart choice.svg";
 import { CiLogin } from "react-icons/ci";
 import compare from "../../assets/Screenshot_2025-02-17_125922-removebg-preview.svg";
 // import { IoSearchOutline } from "react-icons/io5";
-
+import { LuLogOut } from "react-icons/lu";
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const isAuthenticated = localStorage.getItem("token");
+  const handleLogout = () => {
+    localStorage.removeItem("token");}
 
   return (
     <nav className="flex justify-between items-center bg-[#302D29] text-white p-3 shadow-md px-5">
@@ -49,6 +53,7 @@ export const Navbar = () => {
           COMPARE
           <img src={compare} alt="compare" className="w-7 h-7" />
         </NavLink>
+
         <NavLink
           to="/login"
           className={({ isActive }) =>
@@ -60,6 +65,21 @@ export const Navbar = () => {
           Log in
           <CiLogin className="text-amber-400 text-2xl" />
         </NavLink>
+        {isAuthenticated ? (
+          <button className="flex justify-center items-center" onClick={()=>{handleLogout}}><LuLogOut/> Logout</button>
+        ) : (
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              `flex items-center gap-1 font-bold ${
+                isActive ? "text-main " : "text-white hover:text-main"
+              }`
+            }
+          >
+            Log in
+            <CiLogin className="text-amber-400 text-2xl" />
+          </NavLink>
+        )}
       </div>
 
       {/* Hamburger Menu */}
