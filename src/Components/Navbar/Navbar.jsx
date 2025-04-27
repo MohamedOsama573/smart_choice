@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/smart choice.svg";
 import { CiLogin } from "react-icons/ci";
 import compare from "../../assets/Screenshot_2025-02-17_125922-removebg-preview.svg";
@@ -10,10 +10,12 @@ export const Navbar = () => {
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
-  const isAuthenticated = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const isAuthenticated = !!localStorage.getItem("token");
   const handleLogout = () => {
-    localStorage.removeItem("token");}
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <nav className="flex justify-between items-center bg-[#302D29] text-white p-3 shadow-md px-5">
@@ -53,20 +55,22 @@ export const Navbar = () => {
           COMPARE
           <img src={compare} alt="compare" className="w-7 h-7" />
         </NavLink>
-
         <NavLink
-          to="/login"
+          to="/wishlist"
           className={({ isActive }) =>
             `flex items-center gap-1 font-bold ${
               isActive ? "text-main" : "text-white hover:text-main"
             }`
-          }
-        >
-          Log in
-          <CiLogin className="text-amber-400 text-2xl" />
-        </NavLink>
+          }>
+          WISHLIST
+          </NavLink>
         {isAuthenticated ? (
-          <button className="flex justify-center items-center" onClick={()=>{handleLogout}}><LuLogOut/> Logout</button>
+          <button
+            className="flex justify-center items-center"
+            onClick={handleLogout}
+          >
+            <LuLogOut /> Logout
+          </button>
         ) : (
           <NavLink
             to="/login"

@@ -9,6 +9,8 @@ import { Notfound } from './Components/Notfound/Notfound'
 import { Compare } from './Components/Compare/Compare'
 import ForgetPassword from './Components/ForgetPassword/ForgetPassword'
 import Details from './pages/Details/Details'
+import { ToastContainer } from 'react-toastify'
+import Wishlist from './pages/Wishlist/Wishlist'
 // import { Details } from './pages/Details/Details'
 
 const router = createBrowserRouter([
@@ -19,11 +21,8 @@ const router = createBrowserRouter([
     {path:'login' , element:<Login/>},
     {path:'register' , element:<Register/>},
     {path:'compare' , element:<Compare/>},
-<<<<<<< HEAD
-    {path:'/product/:id' , element:<Details/>},
-=======
+    {path:'wishlist', element:<Wishlist/>},
     {path:'product/:id' , element:<Details/>},
->>>>>>> 9b390f0 (added : Product Details)
     {path:'forgetPassword' , element:<ForgetPassword/>},
     {path:'*' , element:<Notfound/>},
   ]}
@@ -32,6 +31,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
+     <ToastContainer />
     <RouterProvider router={router}/>
     </>
   )

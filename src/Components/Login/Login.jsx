@@ -31,7 +31,7 @@ export const Login = () => {
         );
 
         console.log("Login successful:", response.data);
-        localStorage.setItem("token", response.data.token); // Save token
+        localStorage.setItem("token", response.data.access_token); // Save token
 
         // console.log("Login successful:", response.data);
 
