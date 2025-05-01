@@ -4,7 +4,15 @@ import { SlLike } from "react-icons/sl";
 import axios from "axios";
 import { toast } from "react-toastify"; // ✅ Toast for success and error
 
-function HomeCard({ image, name, price, id, currency , category }) {
+function HomeCard({
+  image,
+  name,
+  priceJumia,
+  priceAmazon,
+  id,
+  currency,
+  category,
+}) {
   const truncatedName = name.length > 40 ? name.slice(0, 40) + "..." : name;
 
   const addToWishList = async () => {
@@ -19,7 +27,7 @@ function HomeCard({ image, name, price, id, currency , category }) {
         `${import.meta.env.VITE_BASEURL}api/v1/wishlist`,
         {
           productId: id,
-          modelType: category, 
+          modelType: category,
         },
         {
           headers: {
@@ -51,7 +59,10 @@ function HomeCard({ image, name, price, id, currency , category }) {
         {truncatedName}
       </Link>
       <p className="text-gray-600 mt-1">
-        {price} {currency}
+        Price Amazon : {priceAmazon} {currency}
+      </p>
+      <p className="text-gray-600 mt-1">
+        Price Jumia : {priceJumia} {currency}
       </p>
       <div className="flex gap-2 justify-between items-center w-full">
         <button className="bg-main w-full cursor-pointer text-white rounded-lg px-4 py-2 mt-4 hover:bg-blue-400 transition duration-200">

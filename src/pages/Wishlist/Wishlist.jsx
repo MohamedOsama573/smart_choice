@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { toast } from "react-toastify";
+import { MdDelete } from "react-icons/md";
 function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,25 @@ function Wishlist() {
 
     fetchWishlist();
   }, []);
-
+  const deleteFromWishlist = async (productId, modelType) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`${import.meta.env.VITE_BASEURL}api/v1/delete-wishlist`, {
+        headers: {
+          Authorization: `abdelrahman ${token}`,
+        },
+        data: {
+          productId,
+          modelType,
+        },
+      });
+      toast.success(response.data.message || "Deleted from wishlist!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to delete from wishlist", error);
+      toast.error("Failed to delete from wishlist. Please try again.");
+    }
+  }
   if (loading) {
     return (
       <div className="flex justify-center items-center h-60">
@@ -83,6 +102,12 @@ function Wishlist() {
                     </a>
                   )}
                 </div>
+                <button
+                  onClick={() => deleteFromWishlist(item.productId,item.modelType)}
+                  className="text-red-500 hover:text-red-700 transition duration-200"
+                >
+                  <MdDelete size={24} />
+                  </button>
               </div>
             </div>
           </div>
