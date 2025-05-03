@@ -12,6 +12,8 @@ function HomeCard({
   id,
   currency,
   category,
+  onSelect, 
+  selected
 }) {
   const truncatedName = name.length > 40 ? name.slice(0, 40) + "..." : name;
 
@@ -35,11 +37,10 @@ function HomeCard({
           },
         }
       );
-
-      toast.success("Added to wishlist!");
-      console.log(response.data);
+      toast.success(response.data.message || "Added to wishlist!");
+      // console.log(response.data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
@@ -65,9 +66,14 @@ function HomeCard({
         Price Jumia : {priceJumia} {currency}
       </p>
       <div className="flex gap-2 justify-between items-center w-full">
-        <button className="bg-main w-full cursor-pointer text-white rounded-lg px-4 py-2 mt-4 hover:bg-blue-400 transition duration-200">
-          Compare
-        </button>
+      <label className="bg-main px-2 rounded text-sm">
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => onSelect(id)}
+        />{" "}
+        Compare
+      </label>
 
         {/* ✅ Make Like clickable */}
         <button

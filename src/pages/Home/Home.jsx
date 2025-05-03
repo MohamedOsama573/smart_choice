@@ -8,12 +8,16 @@ import HomeCard from "./Home-Components/HomeCard";
 import Loading from "../../Components/Loader/Loading";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
+import { getAllTablets } from "../../../Redux/Services/Products/getTabletProducts";
+import { getTelevisionProducts } from "../../../Redux/Services/Products/getTelevisionProducts";
 
 export const Home = () => {
   const dispatch = useDispatch();
   const {
     AmazonLaptopsProducts,
     phoneProducts,
+    tabletesProducts,
+    televisionProducts,
     ProductsLoading,
     ProductError,
   } = useSelector((state) => state.products);
@@ -21,12 +25,22 @@ export const Home = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
   const [selectedSource, setSelectedSource] = useState("amazonLaptops");
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const handleSelect = (id) => {
+    setSelectedProducts((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
 
   useEffect(() => {
     if (selectedSource === "amazonLaptops") {
       dispatch(getAmazonLaptops({ page, limit }));
     } else if (selectedSource === "phones") {
       dispatch(getPhoneProducts({ page, limit }));
+    } else if (selectedSource === "tablets") {
+      dispatch(getAllTablets({ page, limit }));
+    } else if (selectedSource === "televisions") {
+      dispatch(getTelevisionProducts({ page, limit }));
     }
     // Add future APIs here if needed
   }, [dispatch, page, selectedSource]);
@@ -40,6 +54,10 @@ export const Home = () => {
       ? AmazonLaptopsProducts
       : selectedSource === "phones"
       ? phoneProducts
+      : selectedSource === "tablets"
+      ? tabletesProducts
+      : selectedSource === "televisions"
+      ? televisionProducts
       : [];
 
   return (
@@ -64,16 +82,22 @@ export const Home = () => {
           Phones
         </button>
         <button
-          onClick={() => console.log("Call third API")}
+          onClick={() => {
+            setSelectedSource("tablets");
+            setPage(1);
+          }}
           className="bg-main text-white px-4 py-2 rounded cursor-pointer"
         >
-          Third Source
+          Tablets
         </button>
         <button
-          onClick={() => console.log("Call fourth API")}
+          onClick={() => {
+            setSelectedSource("televisions");
+            setPage(1);
+          }}
           className="bg-main text-white px-4 py-2 rounded cursor-pointer"
         >
-          Fourth Source
+          Televiosns
         </button>
       </div>
 
@@ -93,8 +117,36 @@ export const Home = () => {
               priceJumia={product.priceJumia}
               currency={product.currency}
               category={product.category}
+              selected={selectedProducts.includes(product._id)}
+              onSelect={handleSelect}
             />
           ))
+        )}
+        {selectedProducts.length >= 2 && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-3 rounded shadow-lg z-50">
+            <button
+              onClick={() => {
+                // Save selected products and category to session/local storage or context
+                sessionStorage.setItem(
+                  "compareData",
+                  JSON.stringify({
+                    productIds: selectedProducts,
+                    category:
+                      selectedSource === "amazonLaptops"
+                        ? "Laptop"
+                        : selectedSource === "phones"
+                        ? "Phone"
+                        : selectedSource === "tablets"
+                        ? "Tablet"
+                        : "Television",
+                  })
+                );
+                window.location.href = "/compare"; // or use `useNavigate()` if using React Router
+              }}
+            >
+              Compare {selectedProducts.length} Products
+            </button>
+          </div>
         )}
       </div>
 
