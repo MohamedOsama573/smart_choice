@@ -1,88 +1,75 @@
-// import { useState } from 'react';
-// import { InputOtp } from 'primereact/inputotp';
-// import { Button } from 'primereact/button';
+import axios from 'axios';
+import { Button } from 'primereact/button';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// export default function SampleDemo() {
-//     const [token, setToken] = useState('');
+export default function Otp() {
+    const [otp, setOtp] = useState(new Array(6).fill(''));
+    const inputsRef = useRef([]);
+    const navigate = useNavigate();
+    const handleChange = (element, index) => {
+        const value = element.value.replace(/\D/, ''); // only digits
+        if (!value) return;
 
-//     const customInput = ({ events, props }) => {
-//         return (
-//             <>
-//                 {/* إضافة key باستخدام props.id */}
-//                 <input
-//                     key={props.id}
-//                     {...events}
-//                     {...props}
-//                     type="text"
-//                     className="custom-otp-input-sample"
-//                 />
-//                 {props.id === 2 && (
-//                     <div className="px-3">
-//                         <i className="pi pi-minus" />
-//                     </div>
-//                 )}
-//             </>
-//         );
-//     };
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
 
-//     return (
-//         <div className="card flex justify-content-center">
-//             <style scoped>
-//                 {`
-//                     .custom-otp-input-sample {
-//                         width: 48px;
-//                         height: 48px;
-//                         font-size: 24px;
-//                         appearance: none;
-//                         text-align: center;
-//                         transition: all 0.2s;
-//                         border-radius: 0;
-//                         border: 1px solid var(--surface-400);
-//                         background: transparent;
-//                         outline-offset: -2px;
-//                         outline-color: transparent;
-//                         border-right: 0 none;
-//                         transition: outline-color 0.3s;
-//                         color: var(--text-color);
-//                     }
+        // Focus next input
+        if (index < 5 && value) {
+            inputsRef.current[index + 1].focus();
+        }
+    };
 
-//                     .custom-otp-input-sample:focus {
-//                         outline: 2px solid var(--primary-color);
-//                     }
+    const handleKeyDown = (e, index) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            inputsRef.current[index - 1].focus();
+        }
+    };
 
-//                     .custom-otp-input-sample:first-child,
-//                     .custom-otp-input-sample:nth-child(5) {
-//                         border-top-left-radius: 12px;
-//                         border-bottom-left-radius: 12px;
-//                     }
+    const handleSubmit = async() => {
+        const enteredOtp = otp.join('');
+        const email = localStorage.getItem('email');
+        try {
+            const response = await axios.patch(`${import.meta.env.VITE_BASEURL}api/v1/confirm-email`, {
+                email,
+                code: enteredOtp,
+            });
+          console.log(response.data);
+          navigate('/login');
+        } catch (error) {
+            console.log("Error verifying OTP:", error);
+            
+        }
+   
+    };
 
-//                     .custom-otp-input-sample:nth-child(3),
-//                     .custom-otp-input-sample:last-child {
-//                         border-top-right-radius: 12px;
-//                         border-bottom-right-radius: 12px;
-//                         border-right-width: 1px;
-//                         border-right-style: solid;
-//                         border-color: var(--surface-400);
-//                     }
-//                 `}
-//             </style>
-//             <div className="flex flex-column align-items-center">
-//                 <p className="font-bold text-xl mb-2">Authenticate Your Account</p>
-//                 <p className="text-color-secondary block mb-5">Please enter the code sent to your phone.</p>
-//                 <InputOtp
-//                     value={token}
-//                     onChange={(e) => setToken(e.value)}
-//                     length={6}
-//                     inputTemplate={customInput}
-//                     style={{ gap: 0 }}
-//                     invalid={false} // تحديد invalid صراحة لتجنب التحذير
-//                     unstyled={false} // تحديد unstyled صراحة لتجنب التحذير
-//                 />
-//                 <div className="flex justify-content-between mt-5 align-self-stretch">
-//                     <Button label="Resend Code" link className="p-0" />
-//                     <Button label="Submit Code" />
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
+    return (
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm text-center">
+                <h2 className="text-2xl font-semibold mb-2">Authenticate Your Account</h2>
+                <p className="text-gray-500 mb-6">Please enter the 6-digit code sent to your Email.</p>
+
+                <div className="flex justify-center gap-2 mb-6">
+                    {otp.map((digit, index) => (
+                        <input
+                            key={index}
+                            ref={(el) => (inputsRef.current[index] = el)}
+                            type="text"
+                            maxLength="1"
+                            className="w-12 h-12 text-center text-xl border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                            value={digit}
+                            onChange={(e) => handleChange(e.target, index)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                        />
+                    ))}
+                </div>
+
+                <div className="flex justify-between text-sm mb-4">
+                    <Button label="Resend Code" link className="p-0 text-blue-600" />
+                    <Button label="Submit Code" onClick={handleSubmit} />
+                </div>
+            </div>
+        </div>
+    );
+}

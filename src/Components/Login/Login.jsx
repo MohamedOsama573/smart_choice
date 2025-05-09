@@ -30,10 +30,10 @@ export const Login = () => {
           values
         );
 
-        console.log("Login successful:", response.data);
+        // console.log("Login successful:", response.data);
         localStorage.setItem("token", response.data.access_token); // Save token
 
-        // console.log("Login successful:", response.data);
+        // // console.log("Login successful:", response.data);
 
         setSuccessMessage("Login successful!");
         setTimeout(() => {
@@ -152,7 +152,15 @@ export const Login = () => {
               Forgot password?
             </Link>
           </div>
-
+          <div className="text-left mt-2">
+            Do not have an Account?{' '}
+            <Link
+              to="/register"
+              className="text-[#4F7292] text-sm hover:text-[#91bfea] hover:transition-all duration-400 ease-in-out"
+            >
+              Create an Account     
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={isLoading}

@@ -23,18 +23,19 @@ export const Register = () => {
       email: "",
       password: "",
       cPassword: "",
+      phone :""
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       setIsLoading(true);
       setSuccessMessage(null);
       setErrorMessage(null);
       try {
-        const response = await axios.post("https://smart-choice-theta.vercel.app/api/v1/signup", values);
-        console.log("Registration successful:", response.data);
-        setSuccessMessage("Registration successful!");
+        localStorage.setItem("email", values.email);
+        const response = await axios.post(`${import.meta.env.VITE_BASEURL}api/v1/signup`, values);
+        setSuccessMessage(response.message||"Registration successful!");
         setTimeout(() => {
           setSuccessMessage(null);
-          navigate("/Login");
+          navigate("/otp");
         }, 1500);
       } catch (error) {
         console.error("Registration failed:", error);
@@ -59,6 +60,7 @@ export const Register = () => {
       email: yup.string().email("Invalid email").required("Email is required"),
       password: yup.string().matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$%^&*-]).{8,}$/, "Must be at least 8 characters, including an uppercase, lowercase, number, and special character").required("Password is required"),
       cPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm password is required"),
+      phone :  yup.string().required("Phone number is required").matches(/^\d{11}$/, "Phone number must be 11 digits"),
     }),
   });
 
@@ -134,6 +136,21 @@ export const Register = () => {
             />
             {registerFormik.touched.email && registerFormik.errors.email && (
               <p className="text-red-500 text-xs mt-1">{registerFormik.errors.email}</p>
+            )}
+          </div>
+          <div className="mt-4">
+            <input
+              id="phone"
+              name="phone"
+              onBlur={registerFormik.handleBlur}
+              onChange={registerFormik.handleChange}
+              value={registerFormik.values.phone}
+              type="text"
+              placeholder="phone"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4F7292] focus:border-transparent"
+            />
+            {registerFormik.touched.phone && registerFormik.errors.phone && (
+              <p className="text-red-500 text-xs mt-1">{registerFormik.errors.phone}</p>
             )}
           </div>
           <div className="mt-4 relative">

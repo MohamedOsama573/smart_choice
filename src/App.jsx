@@ -11,6 +11,7 @@ import ForgetPassword from './Components/ForgetPassword/ForgetPassword'
 import Details from './pages/Details/Details'
 import { ToastContainer } from 'react-toastify'
 import Wishlist from './pages/Wishlist/Wishlist'
+import Otp from './Components/Otp/Otp'
 // import { Details } from './pages/Details/Details'
 
 const router = createBrowserRouter([
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     {path:'/' , element:<Home/>},
     {path:'login' , element:<Login/>},
     {path:'register' , element:<Register/>},
+    {path:'/otp',element:<Otp/>},
     {path:'compare' , element:<Compare/>},
     {path:'wishlist', element:<Wishlist/>},
     {path:'product/:id' , element:<Details/>},
