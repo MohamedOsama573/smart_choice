@@ -29,7 +29,7 @@ function HomeCard({
       }
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}api/v1/wishlist`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/wishlist`,
         {
           productId: id,
           modelType: category,

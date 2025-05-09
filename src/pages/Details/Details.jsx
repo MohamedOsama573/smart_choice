@@ -21,7 +21,7 @@ export default function Details() {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}api/v1/products/amazon-laptop/${id}`,{
+          `${import.meta.env.VITE_BASEURL}/api/v1/products/amazon-laptop/${id}`,{
             headers: {
               Authorization : `abdelrahman ${token}`,
             }

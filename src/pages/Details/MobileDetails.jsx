@@ -20,7 +20,7 @@ export default function MobileDetails() {
         setLoading(true);
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${import.meta.env.VITE_BASEURL}api/v1/mobiles/${id}`,
+          `${import.meta.env.VITE_BASEURL}/api/v1/mobiles/${id}`,
           {
             headers: {
               Authorization: `abdelrahman ${token}`,

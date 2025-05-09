@@ -31,7 +31,7 @@ export default function Otp() {
         const enteredOtp = otp.join('');
         const email = localStorage.getItem('email');
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_BASEURL}api/v1/confirm-email`, {
+            const response = await axios.patch(`${import.meta.env.VITE_BASEURL}/api/v1/confirm-email`, {
                 email,
                 code: enteredOtp,
             });

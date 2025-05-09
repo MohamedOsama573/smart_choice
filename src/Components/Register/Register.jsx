@@ -31,7 +31,7 @@ export const Register = () => {
       setErrorMessage(null);
       try {
         localStorage.setItem("email", values.email);
-        const response = await axios.post(`${import.meta.env.VITE_BASEURL}api/v1/signup`, values);
+        const response = await axios.post(`${import.meta.env.VITE_BASEURL}/api/v1/signup`, values);
         setSuccessMessage(response.message||"Registration successful!");
         setTimeout(() => {
           setSuccessMessage(null);

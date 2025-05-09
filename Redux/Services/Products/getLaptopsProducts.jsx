@@ -7,7 +7,7 @@ export const getAmazonLaptops = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}api/v1/products/all-amazon-laptop?page=${page}&limit=${limit}`,{
+        `${import.meta.env.VITE_BASEURL}/api/v1/products/all-amazon-laptop?page=${page}&limit=${limit}`,{
           headers:{
             Authorization : `abdelrahman ${token}`
           }

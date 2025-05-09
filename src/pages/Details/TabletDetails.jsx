@@ -19,7 +19,7 @@ function TabletDetails() {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}api/v1/tablets/amazon-tablet/${id}`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/tablets/amazon-tablet/${id}`,
         {
           headers: {
             Authorization: `abdelrahman ${token}`,

@@ -19,7 +19,7 @@ function TelevisionDetails() {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}api/v1/televisions/amazon-television/${id}`,
+        `${import.meta.env.VITE_BASEURL}/api/v1/televisions/amazon-television/${id}`,
         {
           headers: {
             Authorization: `abdelrahman ${token}`,

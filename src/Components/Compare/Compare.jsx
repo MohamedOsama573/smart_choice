@@ -15,7 +15,7 @@ export const Compare = () => {
       try {
         setLoading(true);
         const response = await axios.post(
-          `${import.meta.env.VITE_BASEURL}api/v1/compare`,
+          `${import.meta.env.VITE_BASEURL}/api/v1/compare`,
           {
             productIds: data.productIds,
             category: data.category || "laptop",

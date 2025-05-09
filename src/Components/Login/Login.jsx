@@ -26,7 +26,7 @@ export const Login = () => {
       setErrorMessage(null);
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_BASEURL}api/v1/signin`,
+          `${import.meta.env.VITE_BASEURL}/api/v1/signin`,
           values
         );
 
