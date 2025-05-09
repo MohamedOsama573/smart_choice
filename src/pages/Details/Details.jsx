@@ -5,6 +5,7 @@ import amazonLogo from "../../assets/amazon.png";
 import jumiaLogo from "../../assets/jumia.png";
 import noonLogo from "../../assets/noon.png";
 import axios from "axios";
+import Loading from "../../Components/Loader/Loading";
 
 export default function Details() {
   const { id } = useParams();
@@ -44,7 +45,9 @@ export default function Details() {
     );
   };
 
-  if (loading) return <div className="text-center p-5">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center my-12">
+    <Loading />
+  </div>;
   if (error || !product) return <div className="text-center p-5 text-red-500">Error loading product</div>;
 
   return (

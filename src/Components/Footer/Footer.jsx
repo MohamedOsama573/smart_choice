@@ -1,112 +1,173 @@
-import { useFormik } from "formik";
-import * as yup from 'yup';
-import { useState } from "react";
-import { FaEyeSlash } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import { IoMdEye } from "react-icons/io";
-import { Link } from "react-router-dom";
-import axios from "axios";
-export const Register = () => {
-const [showPassword, setShowPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+import { FiPhone, FiMail, FiMapPin, FiSend } from 'react-icons/fi';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaGithub } from 'react-icons/fa';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
+export default function Footer() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
 
-const registerFormik = useFormik({
-  initialValues:{
-    firstName:'',
-    lastName:'',
-    email:'',
-    password:'',
-    cPassword:''
-  },
-  onSubmit: async (values, { setSubmitting, setErrors }) => {
-    try {
-      const response = await axios.post("https://smart-choice-theta.vercel.app/api/v1/signup", values);
-      console.log("Registration successful:", response.data);
-      
-    } catch (error) {
-      console.error("Registration failed:", error);
-      setErrors({ email: "Email already exists or other error" });
-    } finally {
-      setSubmitting(false);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      toast.error("❌ You're not logged in. Please login first.");
+      return;
     }
-  }
-  
-  ,
-  validationSchema: yup.object({
-    firstName: yup.string().required('First name is required').min(3, 'First name must be at least 3 characters').max(15, 'First name must be at most 15 characters'),
-    lastName: yup.string().required('Last name is required').min(3, 'Last name must be at least 3 characters').max(15, 'Last Name must be at most 15 characters'),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$%^&*-]).{8,}$/,
-      "must be at least 8 characters and include an uppercase,a lowercase, a number, and a special character (#?!@$%^&*-)"
-    ).required('Password is required'),
-    cPassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required('Confirm Password is required')
-  })
-})
+
+    const [firstName, ...lastParts] = form.name.trim().split(" ");
+    const lastName = lastParts.join(" ") || "-";
+
+    const body = {
+      firstName: firstName || "-",
+      lastName,
+      email: form.email,
+      phone: "01022222222",
+      message: form.message
+    };
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BASEURL}api/v1/contact-us`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": `abdelrahman ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("✅ Message sent successfully!");
+        setForm({ name: '', email: '', message: '' });
+      } else {
+        toast.error("❌ Failed to send: " + (data.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("❌ Error sending message.");
+    }
+  };
+
 
   return (
-    <div className="flex justify-center  items-center min-h-screen  px-4 sm:px-6 lg:px-8 "> 
-      <div className=" bg-white mt-1 sm:mt-0 p-6  sm:p-8 rounded-xl shadow-[#3333333a] shadow-2xl w-full max-w-md ">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center -mt-2">Create an Account</h2>
-        {/* have account already */}
-        <p className="text-center text-gray-600 mt-2 ">
-          Already have an Account? <Link to='/Login' className="text-[#4F7292] hover:text-[#91bfea] hover:transition-all duration-400 ease-in-out">Log in</Link>
-        </p>
-        <form onSubmit={registerFormik.handleSubmit} className="mt-6">
-          {/* first name and last name inputs */}
-          <div className=" flex flex-col sm:flex-row sm:space-x-8 space-y-4 sm:space-y-0">
-            <div className=" ">
-              <input id="firstName" name="firstName" onBlur={registerFormik.handleBlur} onChange={registerFormik.handleChange} value={registerFormik.values.firstName} type="text" placeholder="First name"className="w-full p-2 mt-2 sm:mt-0 border border-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:scale-[1.02] focus:ring-[#4F7292]  focus:border-0 md:w"/>
-              {registerFormik.touched.firstName && registerFormik.errors.firstName ? (
-                <p className="text-red-500 text-xs mt-1">{registerFormik.errors.firstName}</p>
-              ) : null}
-            </div>
-            <div className="">
-              <input id="lastName" name="lastName" onBlur={registerFormik.handleBlur} onChange={registerFormik.handleChange}value={registerFormik.values.lastName} type="text" placeholder="Last name" className="w-full p-2 mt-2 sm:mt-0 border border-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:scale-[1.02] focus:ring-[#4F7292]  focus:border-0"/>
-              {registerFormik.touched.lastName && registerFormik.errors.lastName ? (
-                <p className="text-red-500 text-xs mt-1">{registerFormik.errors.lastName}</p>
-              ) : null}
-            </div>
-          </div>
-          {/* email input */}
-          <div className="mt-4">
-            <input id="email" name="email" onBlur={registerFormik.handleBlur} onChange={registerFormik.handleChange} value={registerFormik.values.email} type="email"  placeholder="Email" className="w-full p-2 mt-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:scale-[1.02] focus:ring-[#4F7292]  focus:border-0"/>
-          </div>
-          {registerFormik.touched.email && registerFormik.errors.email ? (
-              <p className="text-red-500 text-xs mt-1">{registerFormik.errors.email}</p>
-            ) : null}
-          {/* password input */}
-          <div className="mt-4 relative">
-            <input id="password" name="password" onBlur={registerFormik.handleBlur} onChange={registerFormik.handleChange} value={registerFormik.values.password} type={showPassword ? "text" : "password"}  placeholder="Password" className="w-full p-2 mt-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:scale-[1.02] focus:ring-[#4F7292]  focus:border-0"/>
-            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"  onClick={() => setShowPassword(!showPassword)}> {showPassword ? <IoMdEye /> : <FaEyeSlash />}</span>
-          </div>
-          {registerFormik.touched.password && registerFormik.errors.password ? (
-              <p className="text-red-500 text-xs mt-1">{registerFormik.errors.password}</p>
-            ) : null}
-          {/* rePassword input */}
-          <div className="mt-4 relative">
-            <input id="cPassword" name="cPassword" onBlur={registerFormik.handleBlur} onChange={registerFormik.handleChange} value={registerFormik.values.cPassword} type={showConfirmPassword ? "text" : "password"}  placeholder="Confirm Password" className="w-full p-2 mt-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-1 focus:scale-[1.02] focus:ring-[#4F7292]  focus:border-0"/>
-            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}> {showConfirmPassword ? <IoMdEye /> : <FaEyeSlash />}</span>
-          </div>
-          {registerFormik.touched.rePassword && registerFormik.errors.rePassword ? (
-              <p className="text-red-500 text-xs mt-1">{registerFormik.errors.rePassword}</p>
-            ) : null}
-          {/* create account button */}
-          <button type="submit" className="w-full bg-[#6B8EAE] tracking-wider  text-sm sm:text-base text-white p-2 rounded-lg mt-6 hover:bg-[#4F7292] hover:scale-[102%] hover:transition-all duration-200 " > Create Account</button>
-        </form>
-        {/* register with google word */}
-        <div className="flex items-center my-4">
-          <div className="flex-1 border-t border-gray-300"></div>
-          <p className="px-3 text-gray-600">Or register with</p>
-          <div className="flex-1 border-t border-gray-300"></div>
-        </div>
-        {/* google button */}
-        <button className="flex items-center justify-center w-full border border-gray-300 shadow bg-white text-md  p-2 rounded-lg hover:bg-gray-50 hover:scale-[102%] hover:transition-all duration-200 ease-in-out ">
-          <FcGoogle className="text-2xl mr-1.5"/> Google
-        </button>
-      </div>
-    </div>
-  );
-};
+    <footer className="bg-[#222] text-white w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-export default Register;
+          {/* Company Info */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Smart Choice</h3>
+            <p className="text-gray-300 max-w-xs">
+              We create digital experiences that matter. Our team is dedicated to bringing your vision to life.
+            </p>
+            <div className="flex space-x-4 pt-2">
+              {[FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaGithub].map((Icon, idx) => (
+                <a key={idx} href="#" className="text-gray-300 hover:text-white transition transform hover:scale-110">
+                  <Icon size={20} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Quick Links</h3>
+            <ul className="space-y-2">
+              {["Home", "About Us", "Services", "Portfolio", "Careers"].map((link, idx) => (
+                <li key={idx}>
+                  <a href="#" className="text-gray-300 hover:text-white border-b border-transparent hover:border-white transition">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Contact Us</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <FiPhone size={20} className="text-blue-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-300">+1 (555) 123-4567</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <FiMail size={20} className="text-blue-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-300">contact@example.com</span>
+              </li>
+              <li className="flex items-start space-x-3">
+                <FiMapPin size={20} className="text-blue-400 mt-1 flex-shrink-0" />
+                <span className="text-gray-300">
+                  123 Innovation Street, Tech City,<br />
+                  CA 94043, United States
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Form */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Send a Message</h3>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Your Name"
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Your Email"
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
+                required
+              />
+              <textarea
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                placeholder="Your Message"
+                rows={3}
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 resize-none"
+                required
+              />
+              <button
+                type="submit"
+                className="flex items-center justify-center w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md transition duration-300"
+              >
+                <FiSend size={16} className="mr-2" />
+                <span>Send Message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-sm">
+            © {new Date().getFullYear()} Smart Choice. All rights reserved.
+          </p>
+          <ul className="flex space-x-6 text-sm mt-4 md:mt-0">
+            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((link, idx) => (
+              <li key={idx}>
+                <a href="#" className="text-gray-400 hover:text-white transition">
+                  {link}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </footer>
+  );
+}

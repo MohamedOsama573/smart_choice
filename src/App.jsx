@@ -1,17 +1,20 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
+import { ToastContainer } from 'react-toastify'
 import './App.css'
-import { Home } from './pages/Home/Home'
-import { Layout } from './Components/Layout/Layout'
-import { Login } from './Components/Login/Login'
-import { Register } from './Components/Register/Register'
-import { Notfound } from './Components/Notfound/Notfound'
 import { Compare } from './Components/Compare/Compare'
 import ForgetPassword from './Components/ForgetPassword/ForgetPassword'
-import Details from './pages/Details/Details'
-import { ToastContainer } from 'react-toastify'
-import Wishlist from './pages/Wishlist/Wishlist'
+import { Layout } from './Components/Layout/Layout'
+import { Login } from './Components/Login/Login'
+import { Notfound } from './Components/Notfound/Notfound'
 import Otp from './Components/Otp/Otp'
+import { Register } from './Components/Register/Register'
+import Details from './pages/Details/Details'
+import MobileDetails from './pages/Details/MobileDetails'
+import TabletDetails from './pages/Details/TabletDetails'
+import TelevisionDetails from './pages/Details/TelevisionDetails'
+import { Home } from './pages/Home/Home'
+import Wishlist from './pages/Wishlist/Wishlist'
 // import { Details } from './pages/Details/Details'
 
 const router = createBrowserRouter([
@@ -24,7 +27,10 @@ const router = createBrowserRouter([
     {path:'/otp',element:<Otp/>},
     {path:'compare' , element:<Compare/>},
     {path:'wishlist', element:<Wishlist/>},
-    {path:'product/:id' , element:<Details/>},
+    {path:'/Laptop/product/:id' , element:<Details/>},
+    {path:'/Mobile/product/:id' , element:<MobileDetails/>},
+    {path:'/Tablet/product/:id' , element:<TabletDetails/>},
+    {path:'/Television/product/:id' , element:<TelevisionDetails/>},
     {path:'forgetPassword' , element:<ForgetPassword/>},
     {path:'*' , element:<Notfound/>},
   ]}
@@ -35,6 +41,7 @@ function App() {
     <>
      <ToastContainer />
     <RouterProvider router={router}/>
+   
     </>
   )
 }
