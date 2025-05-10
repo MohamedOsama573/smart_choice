@@ -15,7 +15,6 @@ import TabletDetails from './pages/Details/TabletDetails'
 import TelevisionDetails from './pages/Details/TelevisionDetails'
 import { Home } from './pages/Home/Home'
 import Wishlist from './pages/Wishlist/Wishlist'
-// import { Details } from './pages/Details/Details'
 
 const router = createBrowserRouter([
   {path: '' , element: <Layout/>, children: [
