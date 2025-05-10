@@ -16,6 +16,9 @@ import { GrFormPrevious } from "react-icons/gr";
 import Footer from "../../Components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import LaptopFilterSidebar from "./Home-Components/LaptopFilterSidebar";
+import TabletFilterSidebar from "./Home-Components/TabletFilterSidebar";
+import MobileFilterSidebar from "./Home-Components/MobileFilterSidebar";
+import TelevisionFilterSidebar from "./Home-Components/TelevisionFilterSidebar";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -46,13 +49,13 @@ export const Home = () => {
         dispatch(getAmazonLaptops({ page, limit, filters }));
         break;
       case "phones":
-        dispatch(getPhoneProducts({ page, limit }));
+        dispatch(getPhoneProducts({ page, limit , filters }));
         break;
       case "tablets":
-        dispatch(getAllTablets({ page, limit }));
+        dispatch(getAllTablets({ page, limit ,filters }));
         break;
       case "televisions":
-        dispatch(getTelevisionProducts({ page, limit }));
+        dispatch(getTelevisionProducts({ page, limit,filters }));
         break;
       default:
         break;
@@ -110,8 +113,14 @@ export const Home = () => {
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 px-4">
-            {selectedSource === "amazonLaptops" && (
+            {selectedSource === "amazonLaptops" ? (
               <LaptopFilterSidebar filters={filters} setFilters={setFilters} />
+            ) : selectedSource === "tablets" ? (
+              <TabletFilterSidebar filters={filters} setFilters={setFilters}/>
+            ) : selectedSource === "phones" ?(
+              <MobileFilterSidebar filters={filters} setFilters={setFilters} />
+            ):(
+              <TelevisionFilterSidebar filters={filters} setFilters={setFilters} />
             )}
 
             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6  items-start  ">
