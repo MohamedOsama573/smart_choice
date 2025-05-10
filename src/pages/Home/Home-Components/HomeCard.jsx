@@ -47,14 +47,15 @@ function HomeCard({
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-const isAuthinticated = !! localStorage.getItem("token");
+  const isAuthinticated = !!localStorage.getItem("token");
   return (
     <div className="flex flex-col justify-center items-center bg-white rounded-lg shadow-md py-6 px-4 m-2">
       <img
         src={image}
         alt={name}
-        className="w-full  object-cover rounded-t-lg"
+        className="w-full object-cover h-52 cursor-pointer rounded-t-lg transition-transform duration-300 transform hover:scale-110"
       />
+
       <Link
         to={`/${category}/product/${id}`}
         className="text-lg font-semibold mt-2 text-center w-full truncate"
@@ -74,7 +75,11 @@ const isAuthinticated = !! localStorage.getItem("token");
           {priceJumia} {currency}
         </p>
       </div>
-      <div className={priceNoon ? "flex justify-between items-center gap-2" : "hidden"}>
+      <div
+        className={
+          priceNoon ? "flex justify-between items-center gap-2" : "hidden"
+        }
+      >
         <img src={noonLogo} className="w-16 " />
 
         <p className="text-gray-600 mt-1">
@@ -95,7 +100,11 @@ const isAuthinticated = !! localStorage.getItem("token");
         {/* ✅ Make Like clickable */}
         <button
           onClick={addToWishList}
-          className={isAuthinticated?"p-2 rounded-full hover:bg-gray-200 transition cursor-pointer":"hidden"}
+          className={
+            isAuthinticated
+              ? "p-2 rounded-full hover:bg-gray-200 transition cursor-pointer"
+              : "hidden"
+          }
         >
           <FaRegHeart size={20} cursor="pointer" />
         </button>

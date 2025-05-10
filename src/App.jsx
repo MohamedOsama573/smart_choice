@@ -15,12 +15,13 @@ import TabletDetails from './pages/Details/TabletDetails'
 import TelevisionDetails from './pages/Details/TelevisionDetails'
 import { Home } from './pages/Home/Home'
 import Wishlist from './pages/Wishlist/Wishlist'
+import LandingPage from './pages/LandingPage/LandingPage'
 
 const router = createBrowserRouter([
   {path: '' , element: <Layout/>, children: [
 
-    {path:'' , element:<Home/>},
-    {path:'/' , element:<Home/>},
+    {path:'' , element:<LandingPage/>},
+    {path:'/products' , element:<Home/>},
     {path:'login' , element:<Login/>},
     {path:'register' , element:<Register/>},
     {path:'/otp',element:<Otp/>},

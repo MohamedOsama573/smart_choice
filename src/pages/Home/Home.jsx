@@ -73,7 +73,7 @@ export const Home = () => {
 
   return (
     <>
-      <div className="pt-14 bg-gray-100 min-h-screen">
+      <div className="py-14 bg-gray-100 min-h-screen">
         {/* Category Buttons */}
         <div className="flex justify-center items-center lg:px-6 px-2">
           <div className="flex justify-center gap-4 flex-wrap mt-4  p-2 lg:w-1/2 w-full rounded-md">
@@ -133,7 +133,7 @@ export const Home = () => {
 
         {/* Compare Button */}
         {selectedProducts.length >= 2 && (
-          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-main cursor-pointer text-white px-6 py-3 rounded shadow-lg z-50">
+          <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 bg-[#333]  text-white px-6 py-3 rounded shadow-lg z-50">
             <button
               onClick={() => {
                 sessionStorage.setItem(
@@ -152,6 +152,7 @@ export const Home = () => {
                 );
                 navigate("/compare");
               }}
+              className="cursor-pointer"
             >
               Compare {selectedProducts.length} Products
             </button>
@@ -163,14 +164,14 @@ export const Home = () => {
           <button
             onClick={handlePrevPage}
             disabled={page === 1}
-            className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded disabled:opacity-50"
+            className="bg-[#333] px-4 py-2 rounded disabled:opacity-50"
           >
             <GrFormPrevious />
           </button>
           <span className="flex items-center">{`Page ${page}`}</span>
           <button
             onClick={handleNextPage}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-[#333] text-white px-4 py-2 rounded"
           >
             <MdNavigateNext />
           </button>
