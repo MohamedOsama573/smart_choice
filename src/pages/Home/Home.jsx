@@ -15,6 +15,7 @@ import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import Footer from "../../Components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
+import LaptopFilterSidebar from "./Home-Components/LaptopFilterSidebar";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ export const Home = () => {
   const [selectedSource, setSelectedSource] = useState("amazonLaptops");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const limit = 10;
+  const [filters, setFilters] = useState({});
 
   const handleSelect = (id) => {
     setSelectedProducts((prev) =>
@@ -41,7 +43,7 @@ export const Home = () => {
   useEffect(() => {
     switch (selectedSource) {
       case "amazonLaptops":
-        dispatch(getAmazonLaptops({ page, limit }));
+        dispatch(getAmazonLaptops({ page, limit, filters }));
         break;
       case "phones":
         dispatch(getPhoneProducts({ page, limit }));
@@ -55,7 +57,7 @@ export const Home = () => {
       default:
         break;
     }
-  }, [dispatch, page, selectedSource]);
+  }, [dispatch, page, selectedSource, filters]);
 
   const handleNextPage = () => setPage((prev) => prev + 1);
   const handlePrevPage = () => page > 1 && setPage((prev) => prev - 1);
@@ -73,7 +75,7 @@ export const Home = () => {
 
   return (
     <>
-      <div className="py-14 bg-gray-100 min-h-screen">
+      <div className="py-14 bg-gray-100 ">
         {/* Category Buttons */}
         <div className="flex justify-center items-center lg:px-6 px-2">
           <div className="flex justify-center gap-4 flex-wrap mt-4  p-2 lg:w-1/2 w-full rounded-md">
@@ -107,22 +109,28 @@ export const Home = () => {
             <Loading />
           </div>
         ) : (
-          <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
-            {productsToRender.map((product) => (
-              <HomeCard
-                key={product._id}
-                id={product._id}
-                name={product.title}
-                image={product.thumbnailImage}
-                priceAmazon={product.priceAmazon}
-                priceJumia={product.priceJumia}
-                priceNoon={product.priceNoon}
-                currency={product.currency}
-                category={product.category}
-                selected={selectedProducts.includes(product._id)}
-                onSelect={handleSelect}
-              />
-            ))}
+          <div className="flex flex-col lg:flex-row gap-6 px-4">
+            {selectedSource === "amazonLaptops" && (
+              <LaptopFilterSidebar filters={filters} setFilters={setFilters} />
+            )}
+
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6  items-start  ">
+              {productsToRender.map((product) => (
+                <HomeCard
+                  key={product._id}
+                  id={product._id}
+                  name={product.title}
+                  image={product.thumbnailImage}
+                  priceAmazon={product.priceAmazon}
+                  priceJumia={product.priceJumia}
+                  priceNoon={product.priceNoon}
+                  currency={product.currency}
+                  category={product.category}
+                  selected={selectedProducts.includes(product._id)}
+                  onSelect={handleSelect}
+                />
+              ))}
+            </div>
           </div>
         )}
 
