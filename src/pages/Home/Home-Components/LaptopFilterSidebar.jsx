@@ -3,12 +3,24 @@ import { useState } from "react";
 
 const ramOptions = ["4 GB", "8 GB", "16 GB", "32 GB"];
 const screenSizes = ["13.3", "14", "15.6", "16", "17"];
-const processorTypes = ["Core i3", "Core i5", "Core i7", "Core i9", "Ryzen 5", "Ryzen 7"];
+const processorTypes = [
+  "Core i3",
+  "Core i5",
+  "Core i7",
+  "Core i9",
+  "Ryzen 5",
+  "Ryzen 7",
+];
 const osOptions = ["Windows", "Mac OS", "Linux", "ChromeOS"];
 const storageOptions = ["256 GB", "512 GB", "1 TB", "2 TB"];
 const brands = ["HP", "Dell", "MSI", "Lenovo", "Asus", "Acer", "Apple"];
 const graphicsDescriptions = ["Integrated", "Dedicated"];
-const graphicsCoprocessors = ["Intel Iris", "Intel UHD", "NVIDIA GeForce", "AMD Radeon"];
+const graphicsCoprocessors = [
+  "Intel Iris",
+  "Intel UHD",
+  "NVIDIA GeForce",
+  "AMD Radeon",
+];
 
 const LaptopFilterSidebar = ({ filters, setFilters }) => {
   const [localFilters, setLocalFilters] = useState(filters || {});
@@ -54,7 +66,13 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
       <div>
         <label className="block font-medium mb-1">Availability</label>
         <select
-          value={localFilters.inStock === true ? "true" : localFilters.inStock === false ? "false" : ""}
+          value={
+            localFilters.inStock === true
+              ? "true"
+              : localFilters.inStock === false
+              ? "false"
+              : ""
+          }
           onChange={(e) => handleChange("inStock", e.target.value === "true")}
           className="w-full border border-gray-300 rounded px-3 py-2"
         >
@@ -74,7 +92,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {brands.map((b) => (
-            <option key={b} value={b}>{b}</option>
+            <option key={b} value={b}>
+              {b}
+            </option>
           ))}
         </select>
       </div>
@@ -89,7 +109,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {processorTypes.map((p) => (
-            <option key={p} value={p}>{p}</option>
+            <option key={p} value={p}>
+              {p}
+            </option>
           ))}
         </select>
       </div>
@@ -104,7 +126,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {ramOptions.map((ram) => (
-            <option key={ram} value={ram}>{ram}</option>
+            <option key={ram} value={ram}>
+              {ram}
+            </option>
           ))}
         </select>
       </div>
@@ -119,7 +143,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {screenSizes.map((size) => (
-            <option key={size} value={size}>{size}</option>
+            <option key={size} value={size}>
+              {size}
+            </option>
           ))}
         </select>
       </div>
@@ -134,7 +160,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {graphicsCoprocessors.map((g) => (
-            <option key={g} value={g}>{g}</option>
+            <option key={g} value={g}>
+              {g}
+            </option>
           ))}
         </select>
       </div>
@@ -144,12 +172,16 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         <label className="block font-medium mb-1">Graphics Description</label>
         <select
           value={localFilters.graphicsCardDescription || ""}
-          onChange={(e) => handleChange("graphicsCardDescription", e.target.value)}
+          onChange={(e) =>
+            handleChange("graphicsCardDescription", e.target.value)
+          }
           className="w-full border border-gray-300 rounded px-3 py-2"
         >
           <option value="">All</option>
           {graphicsDescriptions.map((desc) => (
-            <option key={desc} value={desc}>{desc}</option>
+            <option key={desc} value={desc}>
+              {desc}
+            </option>
           ))}
         </select>
       </div>
@@ -164,7 +196,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {osOptions.map((os) => (
-            <option key={os} value={os}>{os}</option>
+            <option key={os} value={os}>
+              {os}
+            </option>
           ))}
         </select>
       </div>
@@ -179,7 +213,9 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
         >
           <option value="">All</option>
           {storageOptions.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>
+              {s}
+            </option>
           ))}
         </select>
       </div>
@@ -206,6 +242,18 @@ const LaptopFilterSidebar = ({ filters, setFilters }) => {
           onChange={(e) => handleChange("series", e.target.value)}
           className="w-full border border-gray-300 rounded px-3 py-2"
           placeholder="Series name"
+        />
+      </div>
+      {/* Max Price */}
+      <div>
+        <label className="block font-medium mb-1">Max Price</label>
+        <input
+          type="number"
+          min="0"
+          placeholder="e.g. 2000"
+          value={localFilters.maxPrice || ""}
+          onChange={(e) => handleChange("maxPrice", e.target.value)}
+          className="w-full border border-gray-300 rounded px-3 py-2"
         />
       </div>
 
