@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-
 import { ToastContainer } from 'react-toastify'
 import './App.css'
 import { Compare } from './Components/Compare/Compare'
@@ -20,7 +19,7 @@ import LandingPage from './pages/LandingPage/LandingPage'
 const router = createBrowserRouter([
   {path: '' , element: <Layout/>, children: [
 
-    {path:'' , element:<LandingPage/>},
+    {path:'/' , element:<LandingPage/>},
     {path:'/products' , element:<Home/>},
     {path:'login' , element:<Login/>},
     {path:'register' , element:<Register/>},
