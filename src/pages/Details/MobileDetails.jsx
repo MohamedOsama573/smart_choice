@@ -5,6 +5,8 @@ import amazonLogo from "../../assets/amazon.png";
 import jumiaLogo from "../../assets/jumia.png";
 import noonLogo from "../../assets/noon.png";
 import axios from "axios";
+import HomeCard from "../Home/Home-Components/HomeCard";
+import Loading from "../../Components/Loader/Loading";
 
 export default function MobileDetails() {
   const { id } = useParams();
@@ -13,7 +15,29 @@ export default function MobileDetails() {
   const [loading, setLoading] = useState(false);
   const [mobileData, setData] = useState(null);
   const [error, setError] = useState(false);
+  const [recomendationProducts, setRecomendationProducts] = useState([]);
 
+  const getRecomendationProducts = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASEURL
+        }/api/v1/mobiles/recommend-mobile/${id}`,
+        {
+          headers: {
+            Authorization: `abdelrahman ${token}`,
+          },
+        }
+      );
+  
+      
+      setRecomendationProducts(response.data.recommendMobile);
+    } catch (error) {
+      setError(error.message || "Error");
+    }
+  };
   useEffect(() => {
     const getMobileDetails = async () => {
       try {
@@ -37,6 +61,7 @@ export default function MobileDetails() {
     };
 
     getMobileDetails();
+    getRecomendationProducts();
   }, [id]);
 
   const handleNextImage = () => {
@@ -123,7 +148,31 @@ export default function MobileDetails() {
           </ul>
         </div>
       </div>
-
+   {/* Recomendations  */}
+   <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-2">Recommended Products</h3>
+        {loading ? (
+          <div className="flex justify-center items-center my-8">
+            <Loading />
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
+            {recomendationProducts.map((product) => (
+              <HomeCard
+                key={product._id}
+                id={product._id}
+                name={product.title}
+                image={product.thumbnailImage}
+                priceAmazon={product.priceAmazon}
+                priceJumia={product.priceJumia}
+                priceNoon={product.priceNoon}
+                currency={product.currency}
+                category={product.category}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       {/* Attributes */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold mb-2">Specifications</h3>

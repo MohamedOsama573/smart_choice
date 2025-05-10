@@ -5,6 +5,8 @@ import amazonLogo from "../../assets/amazon.png";
 import jumiaLogo from "../../assets/jumia.png";
 import noonLogo from "../../assets/noon.png";
 import { Button } from "flowbite-react";
+import HomeCard from "../Home/Home-Components/HomeCard";
+import Loading from "../../Components/Loader/Loading";
 
 function TelevisionDetails() {
   const { id } = useParams();
@@ -13,13 +15,35 @@ function TelevisionDetails() {
   const [loading, setLoading] = useState(false);
   const [televisionData, setData] = useState(null);
   const [error, setError] = useState(false);
+  const [recomendationProducts, setRecomendationProducts] = useState([]);
+  const getRecomendationProducts = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASEURL
+        }/api/v1/televisions/recommend-television/${id}`,
+        {
+          headers: {
+            Authorization: `abdelrahman ${token}`,
+          },
+        }
+      );
 
+      setRecomendationProducts(response.data.recommendTelevision);
+    } catch (error) {
+      setError(error.message || "Error");
+    }
+  };
   const getTelevisionDetails = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/api/v1/televisions/amazon-television/${id}`,
+        `${
+          import.meta.env.VITE_BASEURL
+        }/api/v1/televisions/amazon-television/${id}`,
         {
           headers: {
             Authorization: `abdelrahman ${token}`,
@@ -37,6 +61,7 @@ function TelevisionDetails() {
 
   useEffect(() => {
     getTelevisionDetails();
+    getRecomendationProducts();
   }, [id]);
 
   const handleNextImage = () => {
@@ -48,7 +73,9 @@ function TelevisionDetails() {
 
   if (loading) return <div className="text-center p-5">Loading...</div>;
   if (error || !televisionData)
-    return <div className="text-center p-5 text-red-500">Error loading product</div>;
+    return (
+      <div className="text-center p-5 text-red-500">Error loading product</div>
+    );
 
   return (
     <div className="p-5 max-w-6xl mx-auto">
@@ -70,13 +97,17 @@ function TelevisionDetails() {
                 src={img}
                 alt={`thumb-${idx}`}
                 className={`h-16 w-16 object-cover rounded-md border-2 cursor-pointer ${
-                  currentImageIndex === idx ? "border-blue-500" : "border-gray-300"
+                  currentImageIndex === idx
+                    ? "border-blue-500"
+                    : "border-gray-300"
                 }`}
                 onClick={() => setCurrentImageIndex(idx)}
               />
             ))}
           </div>
-          <Button onClick={handleNextImage} className="mt-4">Next Image</Button>
+          <Button onClick={handleNextImage} className="mt-4">
+            Next Image
+          </Button>
         </div>
 
         {/* Right: Info */}
@@ -94,19 +125,34 @@ function TelevisionDetails() {
           {/* Prices and Links */}
           <div className="flex gap-4 mb-4 flex-wrap">
             {televisionData.priceAmazon && (
-              <a href={televisionData.urls?.amazon} target="_blank" rel="noopener noreferrer" className="text-center">
+              <a
+                href={televisionData.urls?.amazon}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center"
+              >
                 <img src={amazonLogo} alt="Amazon" className="h-8 mx-auto" />
                 <p className="text-sm">{televisionData.priceAmazon} EGP</p>
               </a>
             )}
             {televisionData.priceJumia && (
-              <a href={televisionData.urls?.jumia} target="_blank" rel="noopener noreferrer" className="text-center">
+              <a
+                href={televisionData.urls?.jumia}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center"
+              >
                 <img src={jumiaLogo} alt="Jumia" className="h-8 mx-auto" />
                 <p className="text-sm">{televisionData.priceJumia} EGP</p>
               </a>
             )}
             {televisionData.priceNoon && (
-              <a href={televisionData.urls?.noon} target="_blank" rel="noopener noreferrer" className="text-center">
+              <a
+                href={televisionData.urls?.noon}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center"
+              >
                 <img src={noonLogo} alt="Noon" className="h-8 mx-auto" />
                 <p className="text-sm">{televisionData.priceNoon} EGP</p>
               </a>
@@ -135,7 +181,7 @@ function TelevisionDetails() {
               <li key={i}>{feat}</li>
             ))}
           </ul>
-
+        
           {/* Product Overview */}
           <h3 className="font-semibold mb-2">Product Overview:</h3>
           <div className="grid grid-cols-2 gap-2 text-sm mb-4">
@@ -147,7 +193,30 @@ function TelevisionDetails() {
           </div>
         </div>
       </div>
-
+      <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-2">Recommended Products</h3>
+            {loading ? (
+              <div className="flex justify-center items-center my-8">
+                <Loading />
+              </div>
+            ) : (
+              <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
+                {recomendationProducts.map((product) => (
+                  <HomeCard
+                    key={product._id}
+                    id={product._id}
+                    name={product.title}
+                    image={product.thumbnailImage}
+                    priceAmazon={product.priceAmazon}
+                    priceJumia={product.priceJumia}
+                    priceNoon={product.priceNoon}
+                    currency={product.currency}
+                    category={product.category}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
       {/* Reviews Section */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
@@ -156,13 +225,21 @@ function TelevisionDetails() {
             <div key={review._id} className="border-b pb-4">
               <div className="flex items-center mb-2">
                 {review.avatar && (
-                  <img src={review.avatar} alt="avatar" className="w-8 h-8 rounded-full mr-2" />
+                  <img
+                    src={review.avatar}
+                    alt="avatar"
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
                 )}
                 <div>
                   <p className="font-medium">{review.username}</p>
                   <div className="flex items-center">
-                    <span className="text-yellow-400">{"★".repeat(review.ratingScore)}</span>
-                    <span className="text-gray-400 ml-1">{"★".repeat(5 - review.ratingScore)}</span>
+                    <span className="text-yellow-400">
+                      {"★".repeat(review.ratingScore)}
+                    </span>
+                    <span className="text-gray-400 ml-1">
+                      {"★".repeat(5 - review.ratingScore)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -180,7 +257,8 @@ function TelevisionDetails() {
         <div className="grid md:grid-cols-2 gap-4 text-sm">
           {televisionData.attributes?.map((attr) => (
             <div key={attr._id} className="bg-gray-50 p-2 rounded shadow-sm">
-              <span className="font-semibold">{attr.key}</span>: {attr.value || "N/A"}
+              <span className="font-semibold">{attr.key}</span>:{" "}
+              {attr.value || "N/A"}
             </div>
           ))}
         </div>

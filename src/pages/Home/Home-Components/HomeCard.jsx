@@ -47,13 +47,13 @@ function HomeCard({
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-
+const isAuthinticated = !! localStorage.getItem("token");
   return (
     <div className="flex flex-col justify-center items-center bg-white rounded-lg shadow-md py-6 px-4 m-2">
       <img
         src={image}
         alt={name}
-        className="w-full h-40 object-cover rounded-t-lg"
+        className="w-full  object-cover rounded-t-lg"
       />
       <Link
         to={`/${category}/product/${id}`}
@@ -69,18 +69,18 @@ function HomeCard({
         </p>
       </div>
       <div className="flex justify-between items-center gap-2">
-      <img src={jumiaLogo} className="w-16" />
+        <img src={jumiaLogo} className="w-16" />
         <p className="text-gray-600 mt-1">
-           {priceJumia} {currency}
+          {priceJumia} {currency}
         </p>
       </div>
-    <div className="flex justify-between items-center gap-2">
-    <img src={noonLogo} className="w-16 " />
+      <div className={priceNoon ? "flex justify-between items-center gap-2" : "hidden"}>
+        <img src={noonLogo} className="w-16 " />
 
-    <p className="text-gray-600 mt-1">
-        {priceNoon} {currency}
-      </p>
-    </div>
+        <p className="text-gray-600 mt-1">
+          {priceNoon} {currency}
+        </p>
+      </div>
       <div className="flex gap-2 justify-between items-center w-full">
         <label className="bg-[#333] mt-2 py-2 px-6 cursor-pointer rounded  text-white font-bold text-lg">
           <input
@@ -95,7 +95,7 @@ function HomeCard({
         {/* ✅ Make Like clickable */}
         <button
           onClick={addToWishList}
-          className="p-2 rounded-full hover:bg-gray-200 transition cursor-pointer"
+          className={isAuthinticated?"p-2 rounded-full hover:bg-gray-200 transition cursor-pointer":"hidden"}
         >
           <FaRegHeart size={20} cursor="pointer" />
         </button>

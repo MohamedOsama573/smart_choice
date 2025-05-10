@@ -6,6 +6,7 @@ import jumiaLogo from "../../assets/jumia.png";
 import noonLogo from "../../assets/noon.png";
 import axios from "axios";
 import Loading from "../../Components/Loader/Loading";
+import HomeCard from "../Home/Home-Components/HomeCard";
 
 export default function Details() {
   const { id } = useParams();
@@ -14,7 +15,27 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(false);
+  const [recomendationProducts, setRecomendationProducts] = useState([]);
 
+  const getRecomendationProducts = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASEURL
+        }/api/v1/products/recommend-laptop/${id}`,
+        {
+          headers: {
+            Authorization: `abdelrahman ${token}`,
+          },
+        }
+      );
+      setRecomendationProducts(response.data.recommendedLaptop);
+    } catch (error) {
+      setError(error.message || "Error");
+    }
+  };
   useEffect(() => {
     setLoading(true);
     const getOneProduct = async () => {
@@ -36,6 +57,7 @@ export default function Details() {
       }
     };
     getOneProduct();
+    getRecomendationProducts();
   }, [id]);
 
   const handleNextImage = () => {
@@ -111,7 +133,7 @@ export default function Details() {
               </button>
             )}
           </p>
-
+     
           {/* Features */}
           <ul className="list-disc ml-5 text-sm text-gray-700">
             {product.features?.map((feat, i) => (
@@ -120,7 +142,31 @@ export default function Details() {
           </ul>
         </div>
       </div>
-
+ {/* Recomendations  */}
+ <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-2">Recommended Products</h3>
+        {loading ? (
+          <div className="flex justify-center items-center my-8">
+            <Loading />
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
+            {recomendationProducts.map((product) => (
+              <HomeCard
+                key={product._id}
+                id={product._id}
+                name={product.title}
+                image={product.thumbnailImage}
+                priceAmazon={product.priceAmazon}
+                priceJumia={product.priceJumia}
+                priceNoon={product.priceNoon}
+                currency={product.currency}
+                category={product.category}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       {/* Attributes */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold mb-2">Specifications</h3>
