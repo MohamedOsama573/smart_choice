@@ -14,6 +14,7 @@ import Loading from "../../Components/Loader/Loading";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import Footer from "../../Components/Footer/Footer";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export const Home = () => {
     ProductsLoading,
     ProductError,
   } = useSelector((state) => state.products);
-
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [selectedSource, setSelectedSource] = useState("amazonLaptops");
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -71,111 +72,111 @@ export const Home = () => {
       : [];
 
   return (
-   <>
-    <div className="pt-14 bg-gray-100 min-h-screen">
-      {/* Category Buttons */}
-      <div className="flex justify-center items-center lg:px-6 px-2">
-        <div className="flex justify-center gap-4 flex-wrap mt-4  p-2 lg:w-1/2 w-full rounded-md">
-          {[
-            { label: "Laptops", value: "amazonLaptops" },
-            { label: "Phones", value: "phones" },
-            { label: "Tablets", value: "tablets" },
-            { label: "Televisions", value: "televisions" },
-          ].map(({ label, value }) => (
+    <>
+      <div className="pt-14 bg-gray-100 min-h-screen">
+        {/* Category Buttons */}
+        <div className="flex justify-center items-center lg:px-6 px-2">
+          <div className="flex justify-center gap-4 flex-wrap mt-4  p-2 lg:w-1/2 w-full rounded-md">
+            {[
+              { label: "Laptops", value: "amazonLaptops" },
+              { label: "Phones", value: "phones" },
+              { label: "Tablets", value: "tablets" },
+              { label: "Televisions", value: "televisions" },
+            ].map(({ label, value }) => (
+              <button
+                key={value}
+                onClick={() => {
+                  setSelectedSource(value);
+                  setPage(1);
+                }}
+                className={`px-4 py-2 rounded cursor-pointer ${
+                  selectedSource === value
+                    ? "bg-black text-white"
+                    : "bg-white border border-[#333]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Products Section */}
+        {ProductsLoading ? (
+          <div className="flex justify-center items-center my-4">
+            <Loading />
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
+            {productsToRender.map((product) => (
+              <HomeCard
+                key={product._id}
+                id={product._id}
+                name={product.title}
+                image={product.thumbnailImage}
+                priceAmazon={product.priceAmazon}
+                priceJumia={product.priceJumia}
+                priceNoon={product.priceNoon}
+                currency={product.currency}
+                category={product.category}
+                selected={selectedProducts.includes(product._id)}
+                onSelect={handleSelect}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {ProductError && (
+          <p className="text-center text-red-500 mt-4">{ProductError}</p>
+        )}
+
+        {/* Compare Button */}
+        {selectedProducts.length >= 2 && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-main cursor-pointer text-white px-6 py-3 rounded shadow-lg z-50">
             <button
-              key={value}
               onClick={() => {
-                setSelectedSource(value);
-                setPage(1);
+                sessionStorage.setItem(
+                  "compareData",
+                  JSON.stringify({
+                    productIds: selectedProducts,
+                    category:
+                      selectedSource === "amazonLaptops"
+                        ? "Laptop"
+                        : selectedSource === "phones"
+                        ? "Mobile"
+                        : selectedSource === "tablets"
+                        ? "Tablet"
+                        : "Television",
+                  })
+                );
+                navigate("/compare");
               }}
-              className={`px-4 py-2 rounded cursor-pointer ${
-                selectedSource === value
-                  ? "bg-black text-white"
-                  : "bg-white border border-[#333]"
-              }`}
             >
-              {label}
+              Compare {selectedProducts.length} Products
             </button>
-          ))}
-        </div>
-      </div>
+          </div>
+        )}
 
-      {/* Products Section */}
-      {ProductsLoading ? (
-        <div className="flex justify-center items-center my-4">
-          <Loading />
-        </div>
-      ) : (
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6 mt-6 px-4">
-          {productsToRender.map((product) => (
-            <HomeCard
-              key={product._id}
-              id={product._id}
-              name={product.title}
-              image={product.thumbnailImage}
-              priceAmazon={product.priceAmazon}
-              priceJumia={product.priceJumia}
-              priceNoon={product.priceNoon}
-              currency={product.currency}
-              category={product.category}
-              selected={selectedProducts.includes(product._id)}
-              onSelect={handleSelect}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Error Message */}
-      {ProductError && (
-        <p className="text-center text-red-500 mt-4">{ProductError}</p>
-      )}
-
-      {/* Compare Button */}
-      {selectedProducts.length >= 2 && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-main cursor-pointer text-white px-6 py-3 rounded shadow-lg z-50">
+        {/* Pagination */}
+        <div className="flex justify-center gap-4 my-8">
           <button
-            onClick={() => {
-              sessionStorage.setItem(
-                "compareData",
-                JSON.stringify({
-                  productIds: selectedProducts,
-                  category:
-                    selectedSource === "amazonLaptops"
-                      ? "Laptop"
-                      : selectedSource === "phones"
-                      ? "Mobile"
-                      : selectedSource === "tablets"
-                      ? "Tablet"
-                      : "Television",
-                })
-              );
-              window.location.href = "/compare";
-            }}
+            onClick={handlePrevPage}
+            disabled={page === 1}
+            className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded disabled:opacity-50"
           >
-            Compare {selectedProducts.length} Products
+            <GrFormPrevious />
+          </button>
+          <span className="flex items-center">{`Page ${page}`}</span>
+          <button
+            onClick={handleNextPage}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            <MdNavigateNext />
           </button>
         </div>
-      )}
-
-      {/* Pagination */}
-      <div className="flex justify-center gap-4 my-8">
-        <button
-          onClick={handlePrevPage}
-          disabled={page === 1}
-          className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded disabled:opacity-50"
-        >
-          <GrFormPrevious />
-        </button>
-        <span className="flex items-center">{`Page ${page}`}</span>
-        <button
-          onClick={handleNextPage}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          <MdNavigateNext />
-        </button>
       </div>
-    </div>
-    <Footer />
-   </>
+      <Footer />
+    </>
   );
 };
